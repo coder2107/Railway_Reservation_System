@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Reservation System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            box-shadow: 0 8px 16px rgba(244, 67, 54, 0.3);
+        }
+
+        .info {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
+        }
+
+        .loading {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .status-online {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-offline {
+            background: #f44336;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator" id="status">🔴 Offline</div>
+    
+    <div class="container">
+        <h1>🚂 Railway Reservation</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('book')">Book Ticket</button>
+            <button class="tab" onclick="showTab('print')">Print Ticket</button>
+            <button class="tab" onclick="showTab('view')">Available Seats</button>
+        </div>
+
+        <div id="book" class="tab-content active">
+            <form onsubmit="bookTicket(event)">
+                <div class="form-group">
+                    <label for="name">Passenger Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" min="1" max="120" required>
+                </div>
+                <button type="submit">Book Ticket</button>
+            </form>
+            <div id="bookResponse" class="response" style="display: none;"></div>
+        </div>
+
+        <div id="print" class="tab-content">
+            <form onsubmit="printTicket(event)">
+                <div class="form-group">
+                    <label for="pnr">PNR Number</label>
+                    <input type="number" id="pnr" name="pnr" required>
+                </div>
+                <button type="submit">Print Ticket</button>
+            </form>
+            <div id="printResponse" class="response" style="display: none;"></div>
+        </div>
+
+        <div id="view" class="tab-content">
+            <button onclick="viewSeats()">Check Available Seats</button>
+            <div id="viewResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = 'http://localhost:8080';
+        let isOnline = false;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Clear previous responses
+            clearResponses();
+        }
+
+        function clearResponses() {
+            const responses = document.querySelectorAll('.response');
+            responses.forEach(response => {
+                response.style.display = 'none';
+                response.className = 'response';
+            });
+        }
+
+        function showResponse(elementId, message, type = 'info') {
+            const responseEl = document.getElementById(elementId);
+            responseEl.textContent = message;
+            responseEl.className = `response ${type}`;
+            responseEl.style.display = 'flex';
+        }
+
+        function showLoading(elementId) {
+            const responseEl = document.getElementById(elementId);
+            responseEl.innerHTML = '<div class="loading"></div>';
+            responseEl.className = 'response';
+            responseEl.style.display = 'flex';
+        }
+
+        async function sendRequest(command) {
+            try {
+                const response = await fetch(SERVER_URL + '/api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: command
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.text();
+                updateStatus(true);
+                return result;
+            } catch (error) {
+                updateStatus(false);
+                throw error;
+            }
+        }
+
+        async function bookTicket(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const age = document.getElementById('age').value;
+            
+            if (!name || !age) {
+                showResponse('bookResponse', 'Please fill in all fields', 'error');
+                return;
+            }
+            
+            showLoading('bookResponse');
+            
+            try {
+                const command = `BOOK ${name} ${age}`;
+                const response = await sendRequest(command);
+                
+                if (response.includes('BOOKED')) {
+                    showResponse('bookResponse', response, 'success');
+                    document.getElementById('name').value = '';
+                    document.getElementById('age').value = '';
+                } else {
+                    showResponse('bookResponse', response, 'error');
+                }
+            } catch (error) {
+                showResponse('bookResponse', 'Connection failed. Please check if server is running.', 'error');
+            }
+        }
+
+        async function printTicket(event) {
+            event.preventDefault();
+            
+            const pnr = document.getElementById('pnr').value;
+            
+            if (!pnr) {
+                showResponse('printResponse', 'Please enter PNR number', 'error');
+                return;
+            }
+            
+            showLoading('printResponse');
+            
+            try {
+                const command = `PRINT ${pnr}`;
+                const response = await sendRequest(command);
+                
+                if (response.includes('PNR:')) {
+                    showResponse('printResponse', response, 'success');
+                } else {
+                    showResponse('printResponse', response, 'error');
+                }
+            } catch (error) {
+                showResponse('printResponse', 'Connection failed. Please check if server is running.', 'error');
+            }
+        }
+
+        async function viewSeats() {
+            showLoading('viewResponse');
+            
+            try {
+                const command = 'VIEW';
+                const response = await sendRequest(command);
+                showResponse('viewResponse', response, 'info');
+            } catch (error) {
+                showResponse('viewResponse', 'Connection failed. Please check if server is running.', 'error');
+            }
+        }
+
+        function updateStatus(online) {
+            const statusEl = document.getElementById('status');
+            if (online !== isOnline) {
+                isOnline = online;
+                if (online) {
+                    statusEl.textContent = '🟢 Online';
+                    statusEl.className = 'status-indicator status-online';
+                } else {
+                    statusEl.textContent = '🔴 Offline';
+                    statusEl.className = 'status-indicator status-offline';
+                }
+            }
+        }
+
+        // Check server status on page load
+        window.addEventListener('load', async () => {
+            try {
+                await sendRequest('VIEW');
+            } catch (error) {
+                updateStatus(false);
+            }
+        });
+    </script>
+</body>
+</html>
