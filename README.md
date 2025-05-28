@@ -39,12 +39,12 @@ A full-stack railway reservation system combining the performance of C with mode
 ### Navingate to project directory
 Type following command in terminal
 ```bash 
-  make
+make
 ```
 Navigate to the bin folder
 Type folowing command in terminal
 ```bash
-  ./server
+./server
 ```
 
 ## Access the Web Application
@@ -72,15 +72,16 @@ Navingate to your html file folder and open the file in the browser
 
 ```
 railway-reservation/
+├──include/
+│    ├── ticket.h       # Function declarations and structures
+├── data/               # Data storage directory
+│   └── tickets.dat     # Binary file for ticket storage
 ├──server/
 │    ├── server.c       # HTTP server with API endpoints
 │    ├── ticket.c       # Ticket booking logic and linkedlist implementation
-│    ├── ticket.h       # Function declarations and structures
 ├──web/
 │    ├── index.html     # Web interface
 ├── Makefile            # Build configuration
-├── data/               # Data storage directory
-│   └── tickets.dat     # Binary file for ticket storage
 └── README.md           # Project documentation
 ```
 
